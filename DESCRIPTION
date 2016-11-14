@@ -1,0 +1,11 @@
+Package: TestPack
+Type: Package
+Title: Doubles Numbers (Title Case)
+Version: 0.1.0
+Author: Mallory Hagadorn
+Maintainer: Mallory Hagadorn <mahagadorn@aggiemail.usu.edu>
+Description: Takes a numeric vector as an input and returns the elements of that
+    vector doubled.
+License: MIT
+LazyData: TRUE
+RoxygenNote: 5.0.1
