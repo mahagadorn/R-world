@@ -1,11 +1,10 @@
-Package: TestPack
+Package: RWorld
 Type: Package
-Title: Doubles Numbers (Title Case)
+Title: Simulate a Plant Ecosystem (Title Case)
 Version: 0.1.0
 Author: Mallory Hagadorn
 Maintainer: Mallory Hagadorn <mahagadorn@aggiemail.usu.edu>
-Description: Takes a numeric vector as an input and returns the elements of that
-    vector doubled.
+Description: Takes a terrain matrix and generates a plant ecosystem using that matrix.
 License: MIT + file LICENSE
 LazyData: TRUE
 RoxygenNote: 5.0.1
