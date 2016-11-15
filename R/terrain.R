@@ -110,10 +110,10 @@ make.terrain <- function(n=5, mean=500, lake.na=TRUE){
   return(terrain)
 }
 
-x <- make.terrain(n=3, mean=100, lake.na = TRUE)
-y <- make.terrain(lake.na = FALSE)
-z <- make.terrain(2, 10)
-
+# x <- make.terrain(n=3, mean=100, lake.na = TRUE)
+# y <- make.terrain(lake.na = FALSE)
+# z <- make.terrain(2, 10)
+# 
 
 
 
