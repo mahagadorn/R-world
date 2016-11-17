@@ -8,3 +8,4 @@ Description: Takes a terrain matrix and generates a plant ecosystem using that m
 License: MIT + file LICENSE
 LazyData: TRUE
 RoxygenNote: 5.0.1
+Collate: terrain.R plants.R
