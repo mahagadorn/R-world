@@ -249,8 +249,8 @@ reproduce.fun <- function(row, col, time.step, plants, info){
               #Had this right I just needed to specify a SINGLE Random value
               #MAH Note: It is important to keep nesting these loops
               #that means we are still looping through all the above loops!
-              plants[col.1, col.2, time.step] <- plants[row, col, time.step]  #So if our random value is less than or equal to repro prob ( = reproduction) then take that plant name and put it into the k time step!
-                    #I didn't specify k+1 because I do that in my plant.timestep function
+              plants[col.1, col.2, time.step+1] <- plants[row, col, time.step]  #So if our random value is less than or equal to repro prob ( = reproduction) then take that plant name and put it into the k time step!
+                    #I didn't specify time.step+1 because I do that in my plant.timestep function
             }
         }   #Closing the second if statement
       }     #Closing the first if statement
