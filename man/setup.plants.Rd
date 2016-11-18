@@ -29,6 +29,9 @@ list of elements corresponding to argument inputs
 \description{
 This function generates a list of properties associated with each plant species used in the simulation.
 }
+\examples{
+   setup.plants <- function(repro=c(.5,.5), survive=c(.5,.5), comp.mat, name=c("a", "b"))
+}
 \author{
 Mallory Hagadorn
 }

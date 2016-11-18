@@ -23,9 +23,13 @@ a terrain matrix; numeric elements that are indicates as heights and if lake.na=
 A light wrapper function around \code{diamond.square.step} and the addition of lakes to the terrain matrix
 }
 \examples{
-x <- make.terrain(n=3, x.bar=100, water = TRUE)
+terrain <- make.terrain(3, 100, water = TRUE)
+   #Returned is a matrix (and image) using 3 as the size indicator, 100 as the mean, and saying that any value less than or equal to 0 should be made an NA.
 y <- make.terrain(water = FALSE)
+   #Returned is a matrix (and image) which using the default n and x.bar values, but that specifies values less than or equal to 0 shouldn't be replaced with NA's
+   #This gives the user some flexibility to not force them to use NA's
 z <- make.terrain(2, 10)
+   #Returned is a matrix (and image) where the n(2) and x.bar(10) are much smaller, but NA's still replace the values less than or equal to 0
 }
 \author{
 Mallory Hagadorn

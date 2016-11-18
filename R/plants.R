@@ -3,16 +3,6 @@
 ##Plants
 ##November 7, 2016
 
-# Functions used in this script include
-#    setup.plants
-#    survive.fun
-#    plant.timestep
-#    reproduce
-#    fight
-#    run.plant.ecosystem
-
-
-
 
 #The first thing that we need to do is write a defensive function
 #this function will check a variety of things to ensure that all the input information is right
@@ -23,19 +13,19 @@
 #reproduction probability vector
 
 #probability of reproduction for 3 different species
-repro <- c(.50, 1)
+# repro <- c(.50, 1)
 
 #survival vector containing probability of survival for 3 different species
-survive <- c(.75, .50)
+# survive <- c(.75, .50)
 
 #here is our competition matrix
-comp.mat <- matrix(NA, nrow = length(repro), ncol=length(repro))
-comp.mat[1,] <- c(1, .50)
-comp.mat[2,] <- c(.25, .35)
-comp.mat
+# comp.mat <- matrix(NA, nrow = length(repro), ncol=length(repro))
+# comp.mat[1,] <- c(1, .50)
+# comp.mat[2,] <- c(.25, .35)
+# comp.mat
 
 #names of our plant species
-name <- c("M. sativa", "L. perenne")
+# name <- c("M. sativa", "L. perenne")
 
 #' Step up a list of plant information
 #'
@@ -51,6 +41,8 @@ name <- c("M. sativa", "L. perenne")
 #' @param comp.mat 2 by 2 matrix that corresponds to individual probabilites of a species winning the competition between another species
 #'    There is no default for this input; therefore, the user must define this variable.
 #' @param name Character vector of length two that incorperates the two plant species names to be used in the simulation (Default: "a", "b")
+#' @examples
+#'    setup.plants <- function(repro=c(.5,.5), survive=c(.5,.5), comp.mat, name=c("a", "b"))
 #' @author Mallory Hagadorn
 #' @return list of elements corresponding to argument inputs
 
@@ -66,10 +58,10 @@ setup.plants <- function(repro=c(.5,.5), survive=c(.5,.5), comp.mat, name=c("a",
   survive <- setNames(survive, name)
   #set.Names is a convenience function that sets the names on an object and returns the object
   #set.Names() is the most useful at the end of a function definition where one is creating the object to be returned
-  return(list(repro=repro, survive=survive, comp.mat=comp.mat, name=name))
+  return(info<-list(repro=repro, survive=survive, comp.mat=comp.mat, name=name))
 }
 
-info <- setup.plants(repro, survive, comp.mat, name)
+# info <- setup.plants(repro, survive, comp.mat, name)
 
 
 
@@ -318,7 +310,6 @@ fight <- function(name, info, plants){ #need to tether comp.mat in plants
 #'    This list is generated using the \code{setup.plants} function.
 #' @return a plant array
 #' @author Mallory Hagadorn
-#' @export
 
 run.plant.ecosystem <- function(terrain=terrain, num.timesteps=5, info=info){
   if(num.timesteps > 1000){       #This will keep us from going into an infinite loop! So if it's greater than 1000 timesteps I want you to "stop" and return a warning.
@@ -340,4 +331,53 @@ run.plant.ecosystem <- function(terrain=terrain, num.timesteps=5, info=info){
   }
 }
 
-run.plant.ecosystem(terrain, 3, info)
+
+
+
+#Here I have made a wrapper function that makes my terrain and simulates the entire plant ecosystem
+#I have done this because it is the only way I could figure out how to generate and feed terrain into all my plant steps
+#When I didn't do this I always had to save a matrix called terrain
+#Will, you said that I couldn't do this because packages should ONLY every contain functions and not vectors
+
+#' Generate a terrain matrix and simulate a plant ecosystem on that terrain.
+#'
+#' This is a wrapper function that will make both a terrain matrix and simulate a plant ecosystem through time on that terrain.
+#'     This function should be used if you want to generate all at once.
+#'     If the user simply wants to generate just a terrain (an not simulate a plant ecosystem) the user should use the function \code{make.terrain}.
+#'     If the user wants to generate a terrain and simulate a plant ecosystem on that terrain they should use the function \code{terrain.plantecosystem.wrapper}
+#'     The wrapper function calls \code{run.plant.ecosystem} and will simulate a plant ecosystem based on the arguments \code{repro}, \code{survive}, \code{comp.mat}, and \code{name}.
+#'
+#' @param n Size of the grid will be a (2^n)+1 (by default: n=5; a 33 by 33 grid)
+#' @param x.bar Numeric vector (Default: 500) that will be input as the mean into the rnorm() function.
+#' @param print.terrain If True the generated terrain matrix will be printed.
+#' @param repro Numeric vector of length two representing probabilities of reproduction for the corresponding species (Default: 0.5).
+#'    Reproduction probabilities should be between zero and one.
+#'    Zero represents a probability of reproduction equal to zero, or no chance of reproducing.
+#'    One represents a probability of reproduction equal to one, or 100% chance of reproduction.
+#'    In relation to \code{name}, repro vector positions 1 and 2 correspond to species "a" and "b", respectively.
+#' @param survive Numeric vector of length two representing probabilites of survival for the corresponding species (Default: 0.5).
+#'    See variable repro for a description of probability ranges.
+#'    In relation to \code{name}, survive vector positions 1 and 2 correspond to species "a" and "b", respectively.
+#' @param comp.mat 2 by 2 matrix that corresponds to individual probabilites of a species winning the competition between another species
+#'    There is no default for this input; therefore, the user must define this variable.
+#' @param name Character vector of length two that incorperates the two plant species names to be used in the simulation (Default: "a", "b")
+#' @param num.timesteps Numeric value indicating the number of times steps that should be looped over (Default: 5).
+#'    Maximum number of iterations is 1000.
+#' @param water Logical (Default: TRUE) that specifies whether to make all terrain values lower than zero height underwater.
+#' @author Mallory Hagadorn
+#' @examples
+#' plant.matrix <- terrain.plantecosystem.wrapper(n=3,x.bar=100, print.terrain=TRUE, repro=c(.5,.5), survive=c(1,.5), comp.mat= as.matrix(c(.25,.5,.75,1), ncol=length(repro)), name = c("M. sativa", "L. perenne"), 3, water=TRUE)
+#' @export
+
+
+
+terrain.plantecosystem.wrapper <- function(n, x.bar, print.terrain=TRUE, repro, survive, comp.mat, name, num.timesteps, water=TRUE){
+  terrain <- make.terrain(n, x.bar, water)   #You can't return more than one value from a function, so simply printing (if they want it printed).
+  if(print.terrain==TRUE){
+    print(terrain)
+  }
+  info <- setup.plants(repro, survive, comp.mat, name)
+  plants <- run.plant.ecosystem(terrain, num.timesteps, info)
+  return(plants)    ###This is the more important thing to be returned, so it is being returned over the terrain matrix.
+}
+
