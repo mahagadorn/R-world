@@ -8,23 +8,6 @@
 #this function will check a variety of things to ensure that all the input information is right
     ##basically we are checking to make sure the user isn't putting in any information that is wrong
 
-#need to create our input vectors
-#reproduction probability vector
-
-#probability of reproduction for 3 different species
-# repro <- c(.50, 1)
-
-#survival vector containing probability of survival for 3 different species
-# survive <- c(.75, .50)
-
-#here is our competition matrix
-# comp.mat <- matrix(NA, nrow = length(repro), ncol=length(repro))
-# comp.mat[1,] <- c(1, .50)
-# comp.mat[2,] <- c(.25, .35)
-# comp.mat
-
-#names of our plant species
-# name <- c("M. sativa", "L. perenne")
 
 #' Step up a list of plant information
 #'
