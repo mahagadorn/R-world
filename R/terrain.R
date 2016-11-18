@@ -31,10 +31,10 @@ general.matrix <- function(n=5, x.bar=500){
   g.mat <- matrix(NA, nrow = mat.size, ncol = mat.size)
   # here we are adding values to the corners
   # rnorm() adds a large amount of noise/variation to numeric outputs
-  g.mat[1,1] <- rnorm(1, x.bar, (x.bar*x.bar))
-  g.mat[nrow(g.mat), 1] <- rnorm(1, x.bar, (x.bar*x.bar))
-  g.mat[1, ncol(g.mat)] <- rnorm(1, x.bar, (x.bar*x.bar))
-  g.mat[nrow(g.mat), nrow(g.mat)] <- rnorm(1, x.bar, (x.bar*x.bar))
+  g.mat[1,1] <- rnorm(1, x.bar, (x.bar+x.bar+((1/2)*x.bar)))
+  g.mat[nrow(g.mat), 1] <- rnorm(1, x.bar, (x.bar+x.bar+((1/2)*x.bar)))
+  g.mat[1, ncol(g.mat)] <- rnorm(1, x.bar, (x.bar+x.bar+((1/2)*x.bar)))
+  g.mat[nrow(g.mat), nrow(g.mat)] <- rnorm(1, x.bar, (x.bar+x.bar+((1/2)*x.bar)))
   return(g.mat)
 }
 
@@ -150,4 +150,4 @@ make.terrain <- function(n=5, x.bar=500, lake.na=TRUE){
   return(terrain)
 }
 
-terrain <- make.terrain(3, 100, lake.na = TRUE)
+terrain <- make.terrain(5, 500, lake.na = TRUE)

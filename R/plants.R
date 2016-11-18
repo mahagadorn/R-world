@@ -149,7 +149,7 @@ plant.timestep <- function(plants=plants, info=info){
     for(i in 1:(dim(plants)[1])){       # for index in the matrices rows that make up the ovarall array
       for(j in 1:(dim(plants)[2])){     # for index in the matrices columns that make up the ovarall array
         plants[i,j,(k+1)] <- survive.fun(plants[i,j,k], info)   #calls the survive function and saves the results into the plant array at timestep K+1 (meaning the next time step)
-        plants[i,j,(k+1)] <- reproduce.fun(i, j, k, plants, info)
+        plants <- reproduce.fun(i, j, k, plants, info)
       }
     }
   }
@@ -164,21 +164,6 @@ plant.timestep <- function(plants=plants, info=info){
 # This mean was trying to feed in more numbers then it was supposed to...hense the replace is not a multiple of replacement length
 # This was fixed by saving a single number generated with runif() [called random in survive function] and feeding that into the steps of the function.
 # Got assistance on this from W. Pearse.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
