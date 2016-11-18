@@ -8,7 +8,6 @@
 #this function will check a variety of things to ensure that all the input information is right
     ##basically we are checking to make sure the user isn't putting in any information that is wrong
 
-
 #need to create our input vectors
 #reproduction probability vector
 
@@ -141,6 +140,7 @@ plant.timestep <- function(plants=plants, info=info){
       for(j in 1:(dim(plants)[2])){     # for index in the matrices columns that make up the ovarall array
         plants[i,j,(k+1)] <- survive.fun(plants[i,j,k], info)   #calls the survive function and saves the results into the plant array at timestep K+1 (meaning the next time step)
         plants <- reproduce.fun(i, j, k, plants, info)
+        # plants <- competition(i,j,k, plants, info)
       }
     }
   }
@@ -219,6 +219,7 @@ reproduce.fun <- function(row, col, time.step, plants, info){
         #AND if the subsetted cell isn't waterlogged (NA)...Water can't reproduce
         #AND if our col.1 and col.2 values are greater that ZERO....
         if(!is.na(plants[col.1, col.2, time.step]) & plants[col.1, col.2, time.step] == ''){
+          #This is specific to the particular location
           #I had something similar to the first part (was calling i and j which wasnt working out), but I was missing the second part.
           #The second part I talked through with Maggi K
           #What this if statement is saying: if the cell doesn't equal waterlogged (can't reproduce here) AND it IS BLANK! (aka places we can actually reproduce)
@@ -228,7 +229,7 @@ reproduce.fun <- function(row, col, time.step, plants, info){
               #that means we are still looping through all the above loops!
               plants[col.1, col.2, time.step+1] <- plants[row, col, time.step]  #So if our random value is less than or equal to repro prob ( = reproduction) then take that plant name and put it into the k time step!
                     #I didn't specify time.step+1 because I do that in my plant.timestep function
-            }
+          }
         }   #Closing the second if statement
       }     #Closing the first if statement
     }
@@ -251,20 +252,29 @@ reproduce.fun <- function(row, col, time.step, plants, info){
 #' @author Mallory Hagadorn
 #' @return an array called "plants"
 
-fight <- function(name, info, plants){ #need to tether comp.mat in plants
-  comp.mat <- info$comp.mat
-  name <- info$name
-  for(k in plants){
-    for(i in plants){
-     for(j in plants){
-       plants[i,j,(k+1)] <- sample(name, size=1, prob=info$comp.mat[i,j])
-      }
-    }
-  }
-  return(plants)
-}
-
-
+# competition <- function(row, column, time.step, info, plants){ #need to tether comp.mat in plants
+#   comp.mat <- info$comp.mat
+#   name <- info$name
+#   plants <- plants
+#   random <- runif(1)
+#   for(k in plants){
+#     for(i in plants){
+#      for(j in plants){
+#
+#
+#
+#
+#
+#
+#
+#        plants[i,j,(k+1)] <- sample(name, size=1, prob=info$comp.mat[plants[i, j, k]])
+#       }
+#     }
+#   }
+#   return(plants)
+# }
+#
+# if(random <= info$repro[plants[row, col, time.step]])
 
 
 
