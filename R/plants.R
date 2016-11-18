@@ -82,6 +82,11 @@ return(plants)
 }
 
 
+
+
+
+
+
 #' Determines if the input (where appropriate) will survive
 #'
 #' This function takes the specific cell of an input matrix (can be NA, '', or name) and determines if that cell will "survive" to the next time step.
@@ -105,6 +110,89 @@ survive.fun <- function(cell, info){
     return(cell)
   if(random >= info$survive[cell])
     return('')   #this makes sense because if it dies it's no longer there...there is nothing in this cell
+}
+
+
+
+
+
+
+
+
+#REPRODUCTION
+# our plants keep dying out....because we havent told them to reproduce yet
+# we need them to reproduce like the would in nature (we have already included their reproduction probs in the info section)
+
+# We need to write a function that is called "reproduce"
+# within this function we want to add a call for the plant.timestep function
+
+# first line should look something like this
+# plant <- reproduce(row, col, plants, info)
+# plants is key here.  this is the matrix that we generated that includes the depth of time
+# so the ENTIRE plant matrix has to be passed
+
+# Notice, we also have the info argument here
+# "info" was generated in the setup.plants function
+# this argument contains information such as probability of reproduction and survival, as well as the competition matrix (or probablity of success when faced with competition)
+
+# What do we want out of this function????
+# we want to call the inputs described above
+# we also want to define where they can and can't reproduce--> specifically that they can't reproduce in water
+# we also want to flter out which ones are NOT water logged and then we want to reproduce there
+# we need to CHECK that we actually have a place for them to reproduce to
+# finally we want to return plants matrix
+
+
+#' Simulation of reproduction
+#'
+#' This function take the probabilities included in our \code{info} list and applies them to the elements in the array to determine if that element will successfully reproduce or not.
+#' @param row Row location
+#' @param col Column location
+#' @param plants An array of plant matrice with time as the depth dimension.
+#'     Array generated using the \code{run.plant.ecosystem}.
+#' @param time.step Numeric value indicating the number of times steps that should be looped over (Default: 5).
+#'    Maximum number of iterations is 1000.
+#' @param info A list including reproduction, survival, and competition probabilities, as well as, species names.
+#'    This list is generated using the \code{setup.plants} function.
+#' @author Mallory Hagadorn
+#' @return an array called "plants"
+
+reproduce.fun <- function(row, col, time.step, plants, info){
+  #creating possible locations based on the specific row and column location
+  poss.locs <- as.matrix(expand.grid(row+c(-1,0,1), col+c(-1,0,1)))
+  #filter out NOT water logged locations and then we want to reproduce here
+  #row and column need to be our specific positions
+  #indexes already used = i, j ,k
+  random <- runif(1)    #Learned this trick from Will and my Survive function! We have to specify JUST ONE random number to use.
+  for(m in 1:nrow(poss.locs)){       #looping through the index ranging from 1 through the number of rows in the possible locations matrix made above
+    col.1 <- poss.locs[m,1] #Recieved help from Maggi K. (@MaggiK) on november 17th
+    #What's happening here: we are saving the values for the i-th row and the first column of the matrix containing all possible locations
+    col.2 <- poss.locs[m,2] #Recieved help from Maggi K. (@MaggiK) on november 17th
+    #What's happening here: we are saving the values for the i-th row and the second column of the matrix containing all possible locations
+    #col.1 and col.2 values will be fed back into an if statement that is WITHIN the for loop!
+    if(col.1 <= ncol(plants) & col.2 <= ncol(plants) & plants[row,col, time.step] != '' & !is.na(plants[row,col, time.step]) & col.1 > 0 & col.2 > 0){
+      #THIS IS WHERE I GOT QUITE A BIT OF HELP FROM MAGGI K
+      #What this is saying: The above statement is broken up into multiple "#" commented statements
+      #IF both the values of col.1 (see description above) AND col.2 are less than the number of columns in our plant array
+      #AND if the subsetted cell of our plant array (plants[row,col,k]) is not a blank space ('')...A blank space can't reproduce
+      #AND if the subsetted cell isn't waterlogged (NA)...Water can't reproduce
+      #AND if our col.1 and col.2 values are greater that ZERO....
+      if(!is.na(plants[col.1, col.2, time.step]) & plants[col.1, col.2, time.step] == ''){
+        #This is specific to the particular location
+        #I had something similar to the first part (was calling i and j which wasnt working out), but I was missing the second part.
+        #The second part I talked through with Maggi K
+        #What this if statement is saying: if the cell doesn't equal waterlogged (can't reproduce here) AND it IS BLANK! (aka places we can actually reproduce)
+        if(random <= info$repro[plants[row, col, time.step]]){    #similar to survive function: if our random value is less than the reproduction probability at the specified location in the ARRAY
+          #Had this right I just needed to specify a SINGLE Random value
+          #MAH Note: It is important to keep nesting these loops
+          #that means we are still looping through all the above loops!
+          plants[col.1, col.2, time.step+1] <- plants[row, col, time.step]  #So if our random value is less than or equal to repro prob ( = reproduction) then take that plant name and put it into the k time step!
+          #I didn't specify time.step+1 because I do that in my plant.timestep function
+        }
+      }   #Closing the second if statement
+    }     #Closing the first if statement
+  }
+  return(plants)
 }
 
 
@@ -140,7 +228,6 @@ plant.timestep <- function(plants=plants, info=info){
       for(j in 1:(dim(plants)[2])){     # for index in the matrices columns that make up the ovarall array
         plants[i,j,(k+1)] <- survive.fun(plants[i,j,k], info)   #calls the survive function and saves the results into the plant array at timestep K+1 (meaning the next time step)
         plants <- reproduce.fun(i, j, k, plants, info)
-        # plants <- competition(i,j,k, plants, info)
       }
     }
   }
@@ -160,121 +247,9 @@ plant.timestep <- function(plants=plants, info=info){
 
 
 
-#REPRODUCTION
-# our plants keep dying out....because we havent told them to reproduce yet
-# we need them to reproduce like the would in nature (we have already included their reproduction probs in the info section)
-
-# We need to write a function that is called "reproduce"
-# within this function we want to add a call for the plant.timestep function
-
-# first line should look something like this
-          # plant <- reproduce(row, col, plants, info)
-      # plants is key here.  this is the matrix that we generated that includes the depth of time
-      # so the ENTIRE plant matrix has to be passed
-
-      # Notice, we also have the info argument here
-      # "info" was generated in the setup.plants function
-      # this argument contains information such as probability of reproduction and survival, as well as the competition matrix (or probablity of success when faced with competition)
-
-# What do we want out of this function????
-# we want to call the inputs described above
-# we also want to define where they can and can't reproduce--> specifically that they can't reproduce in water
-# we also want to flter out which ones are NOT water logged and then we want to reproduce there
-# we need to CHECK that we actually have a place for them to reproduce to
-# finally we want to return plants matrix
 
 
-#' Simulation of reproduction
-#'
-#' This function take the probabilities included in our \code{info} list and applies them to the elements in the array to determine if that element will successfully reproduce or not.
-#' @param row Row location
-#' @param col Column location
-#' @param plants An array of plant matrice with time as the depth dimension.
-#'     Array generated using the \code{run.plant.ecosystem}.
-#' @param time.step Numeric value indicating the number of times steps that should be looped over (Default: 5).
-#'    Maximum number of iterations is 1000.
-#' @param info A list including reproduction, survival, and competition probabilities, as well as, species names.
-#'    This list is generated using the \code{setup.plants} function.
-#' @author Mallory Hagadorn
-#' @return an array called "plants"
 
-reproduce.fun <- function(row, col, time.step, plants, info){
-  #creating possible locations based on the specific row and column location
-  poss.locs <- as.matrix(expand.grid(row+c(-1,0,1), col+c(-1,0,1)))
-  #filter out NOT water logged locations and then we want to reproduce here
-  #row and column need to be our specific positions
-  #indexes already used = i, j ,k
-  random <- runif(1)    #Learned this trick from Will and my Survive function! We have to specify JUST ONE random number to use.
-   for(m in 1:nrow(poss.locs)){       #looping through the index ranging from 1 through the number of rows in the possible locations matrix made above
-      col.1 <- poss.locs[m,1] #Recieved help from Maggi K. (@MaggiK) on november 17th
-      #What's happening here: we are saving the values for the i-th row and the first column of the matrix containing all possible locations
-      col.2 <- poss.locs[m,2] #Recieved help from Maggi K. (@MaggiK) on november 17th
-      #What's happening here: we are saving the values for the i-th row and the second column of the matrix containing all possible locations
-      #col.1 and col.2 values will be fed back into an if statement that is WITHIN the for loop!
-      if(col.1 <= ncol(plants) & col.2 <= ncol(plants) & plants[row,col, time.step] != '' & !is.na(plants[row,col, time.step]) & col.1 > 0 & col.2 > 0){
-        #THIS IS WHERE I GOT QUITE A BIT OF HELP FROM MAGGI K
-        #What this is saying: The above statement is broken up into multiple "#" commented statements
-        #IF both the values of col.1 (see description above) AND col.2 are less than the number of columns in our plant array
-        #AND if the subsetted cell of our plant array (plants[row,col,k]) is not a blank space ('')...A blank space can't reproduce
-        #AND if the subsetted cell isn't waterlogged (NA)...Water can't reproduce
-        #AND if our col.1 and col.2 values are greater that ZERO....
-        if(!is.na(plants[col.1, col.2, time.step]) & plants[col.1, col.2, time.step] == ''){
-          #This is specific to the particular location
-          #I had something similar to the first part (was calling i and j which wasnt working out), but I was missing the second part.
-          #The second part I talked through with Maggi K
-          #What this if statement is saying: if the cell doesn't equal waterlogged (can't reproduce here) AND it IS BLANK! (aka places we can actually reproduce)
-            if(random <= info$repro[plants[row, col, time.step]]){    #similar to survive function: if our random value is less than the reproduction probability at the specified location in the ARRAY
-              #Had this right I just needed to specify a SINGLE Random value
-              #MAH Note: It is important to keep nesting these loops
-              #that means we are still looping through all the above loops!
-              plants[col.1, col.2, time.step+1] <- plants[row, col, time.step]  #So if our random value is less than or equal to repro prob ( = reproduction) then take that plant name and put it into the k time step!
-                    #I didn't specify time.step+1 because I do that in my plant.timestep function
-          }
-        }   #Closing the second if statement
-      }     #Closing the first if statement
-    }
-  return(plants)
-}
-
-
-#Competition function
-  #What we need to keep in mind here is that we are going to want our specific plants to fight
-  #that means we will need to include a list of our species and their probability of winning a fight compared to another species
-
-#' Simulation of competition between two plant species
-#'
-#' This function take the probabilities included in our \code{info} list and applies them to the elements in the array to determine which species would win a fight between two possible species.
-#' @param name Name of the elements that will be interacting
-#' @param plants An array of plant matrice with time as the depth dimension.
-#'     Array generated using the \code{run.plant.ecosystem}.
-#' @param info A list including reproduction, survival, and competition probabilities, as well as, species names.
-#'    This list is generated using the \code{setup.plants} function.
-#' @author Mallory Hagadorn
-#' @return an array called "plants"
-
-# competition <- function(row, column, time.step, info, plants){ #need to tether comp.mat in plants
-#   comp.mat <- info$comp.mat
-#   name <- info$name
-#   plants <- plants
-#   random <- runif(1)
-#   for(k in plants){
-#     for(i in plants){
-#      for(j in plants){
-#
-#
-#
-#
-#
-#
-#
-#        plants[i,j,(k+1)] <- sample(name, size=1, prob=info$comp.mat[plants[i, j, k]])
-#       }
-#     }
-#   }
-#   return(plants)
-# }
-#
-# if(random <= info$repro[plants[row, col, time.step]])
 
 
 
@@ -344,6 +319,10 @@ run.plant.ecosystem <- function(terrain=terrain, num.timesteps=5, info=info){
 
 
 
+
+
+
+
 #Here I have made a wrapper function that makes my terrain and simulates the entire plant ecosystem
 #I have done this because it is the only way I could figure out how to generate and feed terrain into all my plant steps
 #When I didn't do this I always had to save a matrix called terrain
@@ -379,8 +358,6 @@ run.plant.ecosystem <- function(terrain=terrain, num.timesteps=5, info=info){
 #' plant.matrix <- terrain.plantecosystem.wrapper(n=3,x.bar=100, print.terrain=TRUE, repro=c(.5,.5), survive=c(1,.5), comp.mat= as.matrix(c(.25,.5,.75,1), ncol=length(repro)), name = c("M. sativa", "L. perenne"), 3, water=TRUE)
 #' @export
 
-
-
 terrain.plantecosystem.wrapper <- function(n, x.bar, print.terrain=TRUE, repro, survive, comp.mat, name, num.timesteps, water=TRUE){
   terrain <- make.terrain(n, x.bar, water)   #You can't return more than one value from a function, so simply printing (if they want it printed).
   if(print.terrain==TRUE){
@@ -390,4 +367,61 @@ terrain.plantecosystem.wrapper <- function(n, x.bar, print.terrain=TRUE, repro, 
   plants <- run.plant.ecosystem(terrain, num.timesteps, info)
   return(plants)    ###This is the more important thing to be returned, so it is being returned over the terrain matrix.
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#######ALL THE ABOVE WORK GREAT, COMPETITION WAS THE ONLY THING I COULDN'T FIGURE OUT
+#I have included that code below in hopes of some partial credit!! :)     We can all hope every now and again.
+
+#Competition function
+#What we need to keep in mind here is that we are going to want our specific plants to fight
+#that means we will need to include a list of our species and their probability of winning a fight compared to another species
+
+#' Simulation of competition between two plant species
+#'
+#' This function take the probabilities included in our \code{info} list and applies them to the elements in the array to determine which species would win a fight between two possible species.
+#' @param row Row location
+#' @param col Column location
+#' @param plants An array of plant matrice with time as the depth dimension.
+#'     Array generated using the \code{run.plant.ecosystem}.
+#' @param time.step Numeric value indicating the number of times steps that should be looped over (Default: 5).
+#'    Maximum number of iterations is 1000.
+#' @param info A list including reproduction, survival, and competition probabilities, as well as, species names.
+#'    This list is generated using the \code{setup.plants} function.
+#' @author Mallory Hagadorn
+#' @return an array called "plants"
+
+competition <- function(row, col, time.step, info, plants){ #need to tether comp.mat in plants
+  comp.mat <- info$comp.mat
+  name <- info$name
+  plants <- plants
+  random <- runif(1)
+  for(k in plants){
+    for(i in plants){
+     for(j in plants){
+       plants[i,j,(k+1)] <- sample(info$name, size=1, prob=info$comp.mat[plants[i, j, k]])   # if(random <= info$repro[plants[row, col, time.step]])
+      }
+    }
+  }
+  return(plants)
+}
+
+
+
+
+
+
 
