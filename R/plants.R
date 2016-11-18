@@ -43,8 +43,6 @@ setup.plants <- function(repro=c(.5,.5), survive=c(.5,.5), comp.mat, name=c("a",
   return(info<-list(repro=repro, survive=survive, comp.mat=comp.mat, name=name))
 }
 
-# info <- setup.plants(repro, survive, comp.mat, name)
-
 
 
 
