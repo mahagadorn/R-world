@@ -20,4 +20,7 @@ general matrix called g.mat
 \description{
 Function to make the initial terrain matrix with seeded corners. Ultimately, this matrix will be input into both the \code{diamond.step} and \code{square.step} functions.
 }
+\author{
+Mallory Hagadorn
+}
 

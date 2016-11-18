@@ -4,7 +4,7 @@
 \alias{make.terrain}
 \title{Make a terrain matrix of numeric values using the Diamond-Square Step Algorithm}
 \usage{
-make.terrain(n = 5, x.bar = 500, lake.na = TRUE)
+make.terrain(n = 5, x.bar = 500, water = TRUE)
 }
 \arguments{
 \item{n}{Size of the grid will be a (2^n)+1 (by default: n=5; a 33 by 33 grid)}
@@ -14,7 +14,7 @@ Standard deviations used in the rnorm() function are generated from the mean val
 The first standard deviation value (calculated as mean * mean) will be used in \code{general.matrix} to generate  the random corner values from a normal distribution.
 The second standard deviation value (calculated as mean/2) will be used in \code{square.step} for generating noise at the finer spatial scales.}
 
-\item{lake.na}{Logical (Default: TRUE) that specifies whether to make all terrain values lower than zero height underwater.}
+\item{water}{Logical (Default: TRUE) that specifies whether to make all terrain values lower than zero height underwater.}
 }
 \value{
 a terrain matrix; numeric elements that are indicates as heights and if lake.na=TRUE \code{NA}s indicated cells that are waterlogged. Terrain matrix is visualized using \code{image}.
@@ -23,8 +23,11 @@ a terrain matrix; numeric elements that are indicates as heights and if lake.na=
 A light wrapper function around \code{diamond.square.step} and the addition of lakes to the terrain matrix
 }
 \examples{
-x <- make.terrain(n=3, x.bar=100, lake.na = TRUE)
-y <- make.terrain(lake.na = FALSE)
+x <- make.terrain(n=3, x.bar=100, water = TRUE)
+y <- make.terrain(water = FALSE)
 z <- make.terrain(2, 10)
+}
+\author{
+Mallory Hagadorn
 }
 

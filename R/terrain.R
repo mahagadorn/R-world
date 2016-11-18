@@ -23,6 +23,7 @@
 #' @param x.bar Numeric vector (Default: 500) that will be input as the mean into the rnorm() function.
 #'    Here, x.bar will be used to add random noise to our terrain matrix through standard deviations from the x.bar value.
 #'    This is applied to rnorm() as sd=(x.bar*x.bar), so one half the x.bar will be the standard deviation used.
+#' @author Mallory Hagadorn
 #' @return general matrix called g.mat
 
 
@@ -31,10 +32,10 @@ general.matrix <- function(n=5, x.bar=500){
   g.mat <- matrix(NA, nrow = mat.size, ncol = mat.size)
   # here we are adding values to the corners
   # rnorm() adds a large amount of noise/variation to numeric outputs
-  g.mat[1,1] <- rnorm(1, x.bar, (x.bar+x.bar+((1/2)*x.bar)))
-  g.mat[nrow(g.mat), 1] <- rnorm(1, x.bar, (x.bar+x.bar+((1/2)*x.bar)))
-  g.mat[1, ncol(g.mat)] <- rnorm(1, x.bar, (x.bar+x.bar+((1/2)*x.bar)))
-  g.mat[nrow(g.mat), nrow(g.mat)] <- rnorm(1, x.bar, (x.bar+x.bar+((1/2)*x.bar)))
+  g.mat[1,1] <- rnorm(1, x.bar, (x.bar*10))
+  g.mat[nrow(g.mat), 1] <- rnorm(1, x.bar, (x.bar*10))
+  g.mat[1, ncol(g.mat)] <- rnorm(1, x.bar, (x.bar*10))
+  g.mat[nrow(g.mat), nrow(g.mat)] <- rnorm(1, x.bar, (x.bar*10))
   return(g.mat)
 }
 
@@ -49,6 +50,7 @@ test.g.mat2 <- general.matrix(2,10)
 #'
 #' Adding values to a general matrix (g.mat) in a diamond algorithm fashion
 #' @param g.mat General matrix generate using the \code{general.matrix} function (Default: g.mat).
+#' @author Mallory Hagadorn
 #' @return a general matrix (g.mat)
 
 
@@ -70,6 +72,7 @@ diamond.step <- function(g.mat=g.mat){
 #' @param x.bar Numeric vector (Default: 500) that will be input as the mean into the rnorm() function.
 #'    Here, x.bar will be used to add random noise to our terrain matrix through standard deviations from the x.bar value.
 #'    This is applied to rnorm() as sd=(x.bar/2), so one half the x.bar will be the standard deviation used.
+#' @author Mallory Hagadorn
 #' @return a general matrix (g.mat)
 
 
@@ -100,6 +103,7 @@ square.step <- function(g.mat=g.mat, x.bar=500){
 #' @param n Size of the grid will be a (2^n)+1 (by default: n=5; a 33 by 33 grid)
 #' @param x.bar Numeric vector (Default: 500) that will be input as the mean into the rnorm() function.
 #'    This value is used to add random noise to the matrix values when functions \code{general.matrix} and \code{square.step} are called.
+#' @author Mallory Hagadorn
 #' @return a general matrix (g.mat)
 
 
@@ -109,6 +113,9 @@ diamond.square.step<- function(g.mat=g.mat, n=5, x.bar=500){
   x.bar <- x.bar
   n <- n
   for(i in 2^(n:1)){
+    #Got inspiration from Bodie's work:
+    #The above line is how we are able to make the subsets within our matrices
+    #MAH Example for understanding
     for(j in seq(1, ncol(g.mat)-1, by=i)){
       for(k in seq(1, nrow(g.mat)-1, by=i)){
         g.mat[k:(k+i),j:(j+i)] <- diamond.step(g.mat[k:(k+i),j:(j+i)])
@@ -127,27 +134,28 @@ diamond.square.step<- function(g.mat=g.mat, n=5, x.bar=500){
 #'    Standard deviations used in the rnorm() function are generated from the mean value.
 #'    The first standard deviation value (calculated as mean * mean) will be used in \code{general.matrix} to generate  the random corner values from a normal distribution.
 #'    The second standard deviation value (calculated as mean/2) will be used in \code{square.step} for generating noise at the finer spatial scales.
-#' @param lake.na Logical (Default: TRUE) that specifies whether to make all terrain values lower than zero height underwater.
+#' @param water Logical (Default: TRUE) that specifies whether to make all terrain values lower than zero height underwater.
 #' @return a terrain matrix; numeric elements that are indicates as heights and if lake.na=TRUE \code{NA}s indicated cells that are waterlogged. Terrain matrix is visualized using \code{image}.
+#' @author Mallory Hagadorn
 #' @examples
-#' x <- make.terrain(n=3, x.bar=100, lake.na = TRUE)
-#' y <- make.terrain(lake.na = FALSE)
+#' x <- make.terrain(n=3, x.bar=100, water = TRUE)
+#' y <- make.terrain(water = FALSE)
 #' z <- make.terrain(2, 10)
 #' @export
 
 
-make.terrain <- function(n=5, x.bar=500, lake.na=TRUE){
+make.terrain <- function(n=5, x.bar=500, water=TRUE){
   n <- n
   x.bar <- x.bar
   mat.size <- ((2^n)+1)
   g.mat <- general.matrix(n, x.bar)
   terrain <- diamond.square.step(g.mat, n, x.bar)
   #now we want to make the option to make anything less than zero NA or (H20)
-  if(lake.na==TRUE){
-    terrain[terrain < 0] <- NA
+  if(water==TRUE){
+    terrain[terrain <= 0] <- NA
   }
   image(terrain, col = terrain.colors(20))
   return(terrain)
 }
 
-terrain <- make.terrain(5, 500, lake.na = TRUE)
+terrain <- make.terrain(5, 500, water = TRUE)

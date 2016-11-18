@@ -51,6 +51,7 @@ name <- c("M. sativa", "L. perenne")
 #' @param comp.mat 2 by 2 matrix that corresponds to individual probabilites of a species winning the competition between another species
 #'    There is no default for this input; therefore, the user must define this variable.
 #' @param name Character vector of length two that incorperates the two plant species names to be used in the simulation (Default: "a", "b")
+#' @author Mallory Hagadorn
 #' @return list of elements corresponding to argument inputs
 
 #here is the function that will set up our plants
@@ -81,6 +82,7 @@ info <- setup.plants(repro, survive, comp.mat, name)
 #' Preallocate an array which corresponds to the dimensions of terrain and the number of times steps to iterate through.
 #' @param terrain A matrix containing numeric elements that are indicates as heights and if lake.na=TRUE \code{NA}s indicated cells that are waterlogged. Terrain matrix is visualized using \code{image}.
 #' @param num.timesteps Numeric value indicating the number of times steps that should be iterated.
+#' @author Mallory Hagadorn
 #' @return an array called "plants"
 
 mk.plant.array <- function(terrain, num.timesteps=5){
@@ -99,6 +101,7 @@ return(plants)
 #'    The survive function will be included in a \code{plant.timestep} function, which is applied to an array.
 #' @param info A list including reproduction, survival, and competition probabilities, as well as, species names.
 #'    This list is generated using the \code{setup.plants} function.
+#' @author Mallory Hagadorn
 #' @return single element of a matrix
 
 survive.fun <- function(cell, info){
@@ -112,11 +115,6 @@ survive.fun <- function(cell, info){
   if(random >= info$survive[cell])
     return('')   #this makes sense because if it dies it's no longer there...there is nothing in this cell
 }
-
-
-
-
-
 
 
 
@@ -140,6 +138,7 @@ survive.fun <- function(cell, info){
 #'     Array generated using the \code{run.plant.ecosystem}.
 #' @param info A list including reproduction, survival, and competition probabilities, as well as, species names.
 #'    This list is generated using the \code{setup.plants} function.
+#' @author Mallory Hagadorn
 #' @return an array called "plants"
 
 #plant.timestep function
@@ -200,10 +199,11 @@ plant.timestep <- function(plants=plants, info=info){
 #' @param col Column location
 #' @param plants An array of plant matrice with time as the depth dimension.
 #'     Array generated using the \code{run.plant.ecosystem}.
-#' @param num.timesteps Numeric value indicating the number of times steps that should be looped over (Default: 5).
+#' @param time.step Numeric value indicating the number of times steps that should be looped over (Default: 5).
 #'    Maximum number of iterations is 1000.
 #' @param info A list including reproduction, survival, and competition probabilities, as well as, species names.
 #'    This list is generated using the \code{setup.plants} function.
+#' @author Mallory Hagadorn
 #' @return an array called "plants"
 
 reproduce.fun <- function(row, col, time.step, plants, info){
@@ -256,6 +256,7 @@ reproduce.fun <- function(row, col, time.step, plants, info){
 #'     Array generated using the \code{run.plant.ecosystem}.
 #' @param info A list including reproduction, survival, and competition probabilities, as well as, species names.
 #'    This list is generated using the \code{setup.plants} function.
+#' @author Mallory Hagadorn
 #' @return an array called "plants"
 
 fight <- function(name, info, plants){ #need to tether comp.mat in plants
@@ -316,6 +317,7 @@ fight <- function(name, info, plants){ #need to tether comp.mat in plants
 #' @param info A list including reproduction, survival, and competition probabilities, as well as, species names.
 #'    This list is generated using the \code{setup.plants} function.
 #' @return a plant array
+#' @author Mallory Hagadorn
 #' @export
 
 run.plant.ecosystem <- function(terrain=terrain, num.timesteps=5, info=info){

@@ -19,4 +19,7 @@ an array called "plants"
 \description{
 Function that incorperates intervals of time and for our entire plant matrix
 }
+\author{
+Mallory Hagadorn
+}
 

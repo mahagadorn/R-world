@@ -22,4 +22,7 @@ Inputs of NA represent a waterlogged cell, whereas those indicated with '', repr
 When a cell is filled with a specific name, that name is referenced back to the list created in \code{setup.plants}. This list contains survival probabilites, which are compared to a random number generated from a uniform distribution.
 If what is in the cell survives, it will be passed to subsequent time series.
 }
+\author{
+Mallory Hagadorn
+}
 

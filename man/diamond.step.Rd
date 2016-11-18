@@ -15,4 +15,7 @@ a general matrix (g.mat)
 \description{
 Adding values to a general matrix (g.mat) in a diamond algorithm fashion
 }
+\author{
+Mallory Hagadorn
+}
 

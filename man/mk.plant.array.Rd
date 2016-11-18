@@ -17,4 +17,7 @@ an array called "plants"
 \description{
 Preallocate an array which corresponds to the dimensions of terrain and the number of times steps to iterate through.
 }
+\author{
+Mallory Hagadorn
+}
 

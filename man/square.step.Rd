@@ -19,4 +19,7 @@ a general matrix (g.mat)
 \description{
 Adding values to a general matrix (g.mat) in a square algorithm fashion
 }
+\author{
+Mallory Hagadorn
+}
 

@@ -20,4 +20,7 @@ a general matrix (g.mat)
 \description{
 Adding values to a general matrix (g.mat) sequentially based on the \code{diamond.step} and \code{square.step} algorithms
 }
+\author{
+Mallory Hagadorn
+}
 

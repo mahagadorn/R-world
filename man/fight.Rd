@@ -21,4 +21,7 @@ an array called "plants"
 \description{
 This function take the probabilities included in our \code{info} list and applies them to the elements in the array to determine which species would win a fight between two possible species.
 }
+\author{
+Mallory Hagadorn
+}
 
