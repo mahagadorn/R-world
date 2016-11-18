@@ -149,6 +149,7 @@ plant.timestep <- function(plants=plants, info=info){
     for(i in 1:(dim(plants)[1])){       # for index in the matrices rows that make up the ovarall array
       for(j in 1:(dim(plants)[2])){     # for index in the matrices columns that make up the ovarall array
         plants[i,j,(k+1)] <- survive.fun(plants[i,j,k], info)   #calls the survive function and saves the results into the plant array at timestep K+1 (meaning the next time step)
+        plants[i,j,(k+1)] <- reproduce.fun(i, j, k, plants, info)
       }
     }
   }
@@ -220,29 +221,41 @@ plant.timestep <- function(plants=plants, info=info){
 #'    This list is generated using the \code{setup.plants} function.
 #' @return an array called "plants"
 
-reproduce <- function(row, col, plants, num.timesteps, info){
+reproduce.fun <- function(row, col, time.step, plants, info){
   #creating possible locations based on the specific row and column location
-  possible.locations <- as.matrix(expand.grid(row+c(-1,0,1), col+c(-1,0,1)))
+  poss.locs <- as.matrix(expand.grid(row+c(-1,0,1), col+c(-1,0,1)))
   #filter out NOT water logged locations and then we want to reproduce here
   #row and column need to be our specific positions
   #indexes already used = i, j ,k
-  for(k in 1:(dim(plants)[3]-1)){
-   for(i in 1:nrow(possible.locations)){       #maybe come back to this? do we want it to be #col or #rows
-    for(j in 1:ncol(possible.locations)){
-      #filtering out those that arent NA
-      if(!is.na(plants[possible.locations[i,1], possible.locations[j,1], k])){
-        if(possible.locations[row,col,k]==info$name){
-          if(runif(1) <= info$repro[plants[row,col,k]]){
-            plants[i,j,k] <- info$names[plants]
-            return(plants)
-          } else{
-            return(plants)
-          }
-        }
-      }
+  random <- runif(1)    #Learned this trick from Will and my Survive function! We have to specify JUST ONE random number to use.
+   for(m in 1:nrow(poss.locs)){       #looping through the index ranging from 1 through the number of rows in the possible locations matrix made above
+      col.1 <- poss.locs[m,1] #Recieved help from Maggi K. (@MaggiK) on november 17th
+      #What's happening here: we are saving the values for the i-th row and the first column of the matrix containing all possible locations
+      col.2 <- poss.locs[m,2] #Recieved help from Maggi K. (@MaggiK) on november 17th
+      #What's happening here: we are saving the values for the i-th row and the second column of the matrix containing all possible locations
+      #col.1 and col.2 values will be fed back into an if statement that is WITHIN the for loop!
+      if(col.1 <= ncol(plants) & col.2 <= ncol(plants) & plants[row,col, time.step] != '' & !is.na(plants[row,col, time.step]) & col.1 > 0 & col.2 > 0){
+        #THIS IS WHERE I GOT QUITE A BIT OF HELP FROM MAGGI K
+        #What this is saying: The above statement is broken up into multiple "#" commented statements
+        #IF both the values of col.1 (see description above) AND col.2 are less than the number of columns in our plant array
+        #AND if the subsetted cell of our plant array (plants[row,col,k]) is not a blank space ('')...A blank space can't reproduce
+        #AND if the subsetted cell isn't waterlogged (NA)...Water can't reproduce
+        #AND if our col.1 and col.2 values are greater that ZERO....
+        if(!is.na(plants[col.1, col.2, time.step]) & plants[col.1, col.2, time.step] == ''){
+          #I had something similar to the first part (was calling i and j which wasnt working out), but I was missing the second part.
+          #The second part I talked through with Maggi K
+          #What this if statement is saying: if the cell doesn't equal waterlogged (can't reproduce here) AND it IS BLANK! (aka places we can actually reproduce)
+            if(random <= info$repro[plants[row, col, time.step]]){    #similar to survive function: if our random value is less than the reproduction probability at the specified location in the ARRAY
+              #Had this right I just needed to specify a SINGLE Random value
+              #MAH Note: It is important to keep nesting these loops
+              #that means we are still looping through all the above loops!
+              plants[col.1, col.2, time.step] <- plants[row, col, time.step]  #So if our random value is less than or equal to repro prob ( = reproduction) then take that plant name and put it into the k time step!
+                    #I didn't specify k+1 because I do that in my plant.timestep function
+            }
+        }   #Closing the second if statement
+      }     #Closing the first if statement
     }
-   }
-  }
+  return(plants)
 }
 
 
@@ -340,4 +353,4 @@ run.plant.ecosystem <- function(terrain=terrain, num.timesteps=5, info=info){
   }
 }
 
-#run.plant.ecosystem(terrain, 3, info)
+run.plant.ecosystem(terrain, 3, info)
