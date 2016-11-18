@@ -19,7 +19,7 @@ This list is generated using the \code{setup.plants} function.}
 a plant array
 }
 \description{
-A wrapper function that generates, seeds, and places NA's in the array where they correspond in the terrain matrix.  Applies survice, reproduction, and competition functions.
+A function that generates, seeds, and places NA's in the array where they correspond in the terrain matrix.  Applies survice, reproduction, and competition functions.
 }
 \author{
 Mallory Hagadorn

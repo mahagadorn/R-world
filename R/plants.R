@@ -70,7 +70,7 @@ setup.plants <- function(repro=c(.5,.5), survive=c(.5,.5), comp.mat, name=c("a",
 
 #' Make empty array
 #'
-#' Preallocate an array which corresponds to the dimensions of terrain and the number of times steps to iterate through.
+#' Pre-allocate an array which corresponds to the dimensions of terrain and the number of times steps to iterate through.
 #' @param terrain A matrix containing numeric elements that are indicates as heights and if lake.na=TRUE \code{NA}s indicated cells that are waterlogged. Terrain matrix is visualized using \code{image}.
 #' @param num.timesteps Numeric value indicating the number of times steps that should be iterated.
 #' @author Mallory Hagadorn
@@ -287,7 +287,7 @@ plant.timestep <- function(plants=plants, info=info){
 
 #' Simulation of plant ecosystem through time
 #'
-#' A wrapper function that generates, seeds, and places NA's in the array where they correspond in the terrain matrix.  Applies survice, reproduction, and competition functions.
+#' A function that generates, seeds, and places NA's in the array where they correspond in the terrain matrix.  Applies survice, reproduction, and competition functions.
 #' @param terrain Numeric matrix generated using \code{make.terrain}
 #' @param num.timesteps Numeric value indicating the number of times steps that should be looped over (Default: 5).
 #'    Maximum number of iterations is 1000.
@@ -367,13 +367,6 @@ terrain.plantecosystem.wrapper <- function(n, x.bar, print.terrain=TRUE, repro, 
   plants <- run.plant.ecosystem(terrain, num.timesteps, info)
   return(plants)    ###This is the more important thing to be returned, so it is being returned over the terrain matrix.
 }
-
-
-
-
-
-
-
 
 
 

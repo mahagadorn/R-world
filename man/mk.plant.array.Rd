@@ -15,7 +15,7 @@ mk.plant.array(terrain, num.timesteps = 5)
 an array called "plants"
 }
 \description{
-Preallocate an array which corresponds to the dimensions of terrain and the number of times steps to iterate through.
+Pre-allocate an array which corresponds to the dimensions of terrain and the number of times steps to iterate through.
 }
 \author{
 Mallory Hagadorn
